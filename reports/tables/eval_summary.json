@@ -1,0 +1,8 @@
+{
+ "pr_auc_lgbm": 0.5011474283992727,
+ "pr_auc_naive": 0.2560080730217935,
+ "event_detection_rate": 0.8465105495015071,
+ "median_lead_days": 11.0,
+ "far": 0.548048686244204,
+ "false_episodes_per_series_year": 1.3039228402913532
+}

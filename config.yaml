@@ -1,0 +1,127 @@
+# =============================================================================
+# RadarPangan — konfigurasi pipeline CRISP-DM
+# Semua path relatif terhadap folder project (folder tempat file ini berada).
+# =============================================================================
+
+project:
+  name: RadarPangan
+  random_seed: 42
+
+paths:
+  raw_pihps: data/raw/pihps          # cache per-bulan hasil scraping (JSON.gz, apa adanya dari API)
+  raw_weather: data/raw/weather      # cache curah hujan NASA POWER per provinsi
+  external: data/external            # data referensi: provinsi, kalender hari besar, GeoJSON
+  interim: data/interim              # data mentah yang sudah digabung & dirapikan
+  processed: data/processed          # panel bersih, label, fitur siap model
+  output: data/output                # hasil prediksi untuk dashboard
+  models: models
+  figures: reports/figures
+  tables: reports/tables
+  site: site                         # dashboard statis (untuk GitHub Pages / Vercel)
+
+# -----------------------------------------------------------------------------
+# DATA UNDERSTANDING — pengumpulan data
+# -----------------------------------------------------------------------------
+scraping:
+  base_url: https://www.bi.go.id/hargapangan/WebSite/TabelHarga
+  start_date: "2018-01-01"           # data PIHPS lengkap 34 provinsi mulai Jan 2018
+  end_date: null                     # null = sampai hari ini
+  price_types: [1, 2, 3, 4]          # 1=Pasar Tradisional, 2=Pasar Modern, 3=Pedagang Besar, 4=Produsen
+  commodities: all                   # "all" (21 varian) atau list, mis. [com_13, com_14, com_16]
+  workers: 2                         # request paralel. Jangan terlalu besar — server BI lambat & harus disopani
+  sleep_seconds: 0.5                 # jeda antar-request per worker
+  timeout_seconds: 180
+  max_retries: 5
+  refresh_recent_months: 2           # N bulan terakhir selalu diambil ulang (data bisa direvisi/bertambah)
+
+weather:
+  source: nasa_power                 # https://power.larc.nasa.gov (gratis, tanpa API key)
+  parameter: PRECTOTCORR             # curah hujan harian terkoreksi (mm/hari)
+  climatology_start: "1991-01-01"    # klimatologi dihitung SEBELUM periode data harga -> bebas leakage
+  climatology_end: "2017-12-31"
+  data_start: "2017-01-01"
+
+# -----------------------------------------------------------------------------
+# BUSINESS UNDERSTANDING -> definisi target
+# -----------------------------------------------------------------------------
+target:
+  price_type: 1                      # harga konsumen = Pasar Tradisional
+  change_window_days: 14             # kenaikan diukur dalam 14 hari kalender
+  default_threshold: 0.15            # "lonjakan" = naik > 15% dalam 14 hari
+  threshold_overrides:               # komoditas yang harganya stabil/diatur: 15% hampir tidak pernah terjadi
+    cat_1: 0.05                      #   Beras        (persentil-99 kenaikan 14 hari = 5,0%)
+    cat_3: 0.075                     #   Daging Sapi  (p99 = 7,0%)
+    cat_9: 0.075                     #   Minyak Goreng(p99 = 9,0%)
+    cat_10: 0.075                    #   Gula Pasir   (p99 = 7,4%)
+                                     # kosongkan ({}) untuk memakai 15% di semua komoditas
+  horizon_days: 14                   # alarm memprediksi onset lonjakan dalam 14 hari ke depan
+  cooldown_days: 14                  # onset baru hanya dihitung jika 14 hari sebelumnya tidak sedang lonjak
+  smoothing_obs: 3                   # median bergulir 3 observasi (trailing) untuk meredam noise harian
+  blip_log_threshold: 0.4055         # ln(1.5): lonjakan 1 hari >50% yang langsung balik = salah input
+  ffill_limit_days: 7                # isi hari libur/akhir pekan maksimal 7 hari ke depan (hanya ke depan!)
+
+# -----------------------------------------------------------------------------
+# DATA PREPARATION -> fitur
+# -----------------------------------------------------------------------------
+features:
+  return_windows: [1, 3, 7, 14, 28]
+  vol_windows: [7, 14, 30]
+  zscore_windows: [30, 90]
+  n_neighbors: 3                     # tetangga geografis (jarak ibu kota provinsi)
+  n_leaders: 3                       # provinsi "pemimpin" dari jaringan lead-lag (dipelajari dari data latih)
+  leader_lag_weeks: 2
+  calendar_cap_days: 120             # jarak ke hari besar dipotong maks 120 hari
+  sentra_provinces:                  # sentra produksi untuk fitur anomali hujan nasional
+    - Jawa Barat
+    - Jawa Tengah
+    - Jawa Timur
+    - Nusa Tenggara Barat
+    - Sulawesi Selatan
+    - Sumatera Utara
+  min_date: "2018-04-01"             # buang periode warm-up fitur (lag/rolling butuh riwayat)
+
+# -----------------------------------------------------------------------------
+# MODELING & EVALUATION
+# -----------------------------------------------------------------------------
+validation:
+  first_test_start: "2022-01-01"     # latih awal: 2018-2021, lalu uji maju per blok
+  test_block_months: 3               # walk-forward: tiap fold menguji 3 bulan berikutnya
+  val_days: 120                      # validasi internal (early stopping + pilih threshold) di akhir data latih
+  purge_days: 14                     # = horizon; mencegah label bocor ke masa depan
+  weekdays_only: true                # origin hanya hari kerja (PIHPS tidak rilis data akhir pekan)
+
+model:
+  lgbm:
+    objective: binary
+    learning_rate: 0.05
+    num_leaves: 63
+    min_child_samples: 200
+    feature_fraction: 0.8
+    bagging_fraction: 0.8
+    bagging_freq: 1
+    lambda_l2: 1.0
+    n_estimators: 2000
+    early_stopping_rounds: 100
+    verbose: -1
+  neg_sample_rate: 0.5               # subsampling negatif saat training (mempercepat; bobot dikoreksi)
+  threshold_metric: f1               # cara memilih ambang alarm di data validasi: f1 | f2 | precision_target
+  precision_target: 0.5              # dipakai kalau threshold_metric = precision_target
+  sarima:
+    enabled: true
+    commodities: [com_14, com_16, com_11, com_10, com_7]   # subset (SARIMA mahal): cabai keriting, rawit merah, bawang merah, telur, ayam
+    order: [1, 1, 1]
+    fourier_k: 2
+  ablation:
+    enabled: true
+    groups: [rantai_pasok, tetangga, pemimpin, kalender, cuaca]   # nama kelompok = feature_groups.json
+
+# -----------------------------------------------------------------------------
+# DEPLOYMENT
+# -----------------------------------------------------------------------------
+deployment:
+  risk_levels:                       # peta warna dashboard (probabilitas lonjakan 14 hari)
+    rendah: 0.0
+    waspada: 0.5                     # dikalikan ambang alarm terpilih (lihat 07_deployment)
+    tinggi: 1.0
+  history_days: 180
+  dashboard_url: "https://GANTI-DENGAN-URL-DASHBOARD-KALIAN"

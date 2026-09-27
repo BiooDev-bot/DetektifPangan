@@ -1,0 +1,68 @@
+# Update otomatis RadarPangan: scrape data terbaru -> fitur -> prediksi -> terbitkan dashboard ke GitHub Pages.
+# Aktifkan: Settings -> Pages -> Build and deployment -> Source: "GitHub Actions".
+name: Update dashboard RadarPangan
+
+on:
+  schedule:
+    - cron: "0 10 * * 1-5"        # 10.00 UTC = 17.00 WIB, Senin-Jumat (setelah PIHPS memperbarui data harian)
+  workflow_dispatch:
+    inputs:
+      retrain:
+        description: "Latih ulang model?"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: radarpangan-pages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Update data, prediksi, dan dashboard
+        run: |
+          if [ "${{ github.event.inputs.retrain }}" = "true" ]; then
+            python run_pipeline.py update --retrain
+          else
+            python run_pipeline.py update
+          fi
+
+      - name: Simpan cache data & model terbaru ke repo
+        run: |
+          git config user.name "radarpangan-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/raw data/external data/output models reports/tables
+          git commit -m "Update data $(date -u +%Y-%m-%d)" || echo "Tidak ada perubahan"
+          git push
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: update
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

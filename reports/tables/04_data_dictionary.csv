@@ -1,0 +1,79 @@
+fitur,kelompok,deskripsi,persen_kosong
+ret_1,harga,Perubahan log harga konsumen 1 hari,4.042324440871551e-05
+ret_3,harga,Perubahan log harga konsumen 3 hari,0.00010040612320874498
+ret_7,harga,Perubahan log harga konsumen 7 hari,0.0001766886973348694
+ret_14,harga,Perubahan log harga konsumen 14 hari,0.00029991439400014737
+ret_28,harga,Perubahan log harga konsumen 28 hari,0.00040684039533933034
+ret_7_prev,harga,Perubahan log harga konsumen minggu sebelumnya (t-14 → t-7),0.0003266458943349431
+vol_7,harga,Volatilitas: simpangan baku perubahan log harian 7 hari,9.584220851743839e-05
+vol_14,harga,Volatilitas: simpangan baku perubahan log harian 14 hari,0.00015973701419573066
+vol_30,harga,Volatilitas: simpangan baku perubahan log harian 30 hari,0.0002836146986740524
+z_30,harga,Z-score log harga terhadap 30 hari terakhir,0.07162346921411344
+z_90,harga,Z-score log harga terhadap 90 hari terakhir,0.040163101271311036
+dist_max_90,harga,Jarak log harga ke harga tertinggi 90 hari terakhir,0.0003351217359045125
+dist_min_90,harga,Jarak log harga ke harga terendah 90 hari terakhir,0.0003351217359045125
+rel_365,harga,Log harga relatif terhadap rata-rata 365 hari,0.030568448614558496
+ret_yoy,harga,Perubahan log harga dibanding 364 hari lalu,0.09077821917352721
+seas_ret_14_ly,harga,Perubahan harga 14 hari yang terjadi tahun lalu pada jendela ke depan yang sama (pola musiman),0.09086428156484899
+r14_now,harga,Kenaikan harga 14 hari saat ini (P_t/P_t-14 - 1),0.00029991439400014737
+gap_to_threshold,harga,Selisih ambang lonjakan dengan kenaikan 14 hari saat ini,0.00029991439400014737
+days_since_spike,harga,Hari sejak terakhir berstatus lonjak (maks 365),0.0
+n_onsets_365,harga,Jumlah kejadian lonjakan dalam 365 hari terakhir,0.0
+nat_ret_7,nasional,Perubahan log harga nasional 7 hari,0.0
+nat_ret_14,nasional,Perubahan log harga nasional 14 hari,0.0
+rel_nat,nasional,Log harga provinsi relatif terhadap harga nasional,0.0
+rel_nat_chg14,nasional,Perubahan 14 hari dari selisih harga provinsi vs nasional,0.00029991439400014737
+nat_spike_share,nasional,Porsi provinsi yang sedang lonjak (komoditas sama),0.0
+nat_spike_share_chg7,nasional,Perubahan 7 hari porsi provinsi yang sedang lonjak,0.0
+ret_7_prod,rantai_pasok,Perubahan log harga produsen 7 hari,0.44774089482719387
+ret_14_prod,rantai_pasok,Perubahan log harga produsen 14 hari,0.4509682345017607
+nat_ret_14_prod,rantai_pasok,Perubahan log harga nasional 14 hari (produsen),0.016492031730942887
+nat_margin_cons_prod,rantai_pasok,Margin log harga konsumen - produsen tingkat nasional,0.013352710411136995
+nat_margin_cons_prod_chg14,rantai_pasok,Perubahan 14 hari margin konsumen-produsen nasional,0.016492031730942887
+ret_7_whole,rantai_pasok,Perubahan log harga pedagang besar 7 hari,0.03727283929608788
+ret_14_whole,rantai_pasok,Perubahan log harga pedagang besar 14 hari,0.0375857934463489
+nat_ret_14_whole,rantai_pasok,Perubahan log harga nasional 14 hari (pedagang besar),0.0
+ret_7_modern,rantai_pasok,Perubahan log harga pasar modern 7 hari,0.20566303574653583
+ret_14_modern,rantai_pasok,Perubahan log harga pasar modern 14 hari,0.20767050622289768
+nat_ret_14_modern,rantai_pasok,Perubahan log harga nasional 14 hari (pasar modern),0.0
+margin_cons_prod,rantai_pasok,Margin log harga konsumen - produsen (provinsi),0.4444770438350966
+margin_cons_prod_chg14,rantai_pasok,Perubahan 14 hari margin konsumen-produsen,0.45099692196553465
+margin_cons_prod_z90,rantai_pasok,Z-score margin konsumen-produsen terhadap 90 hari terakhir,0.4616816982456964
+margin_cons_whole,rantai_pasok,Margin log harga konsumen - pedagang besar,0.03672908146000935
+margin_cons_whole_chg14,rantai_pasok,Perubahan 14 hari margin konsumen-pedagang besar,0.03773444666772289
+margin_whole_prod,rantai_pasok,Margin log harga pedagang besar - produsen,0.4504857635201083
+gap_modern,rantai_pasok,Log harga pasar modern - pasar tradisional,0.20331196769269988
+nbr_ret_7_mean,tetangga,Rata-rata perubahan 7 hari di 3 provinsi terdekat,0.00010105811102178877
+nbr_ret_14_mean,tetangga,Rata-rata perubahan 14 hari di 3 provinsi terdekat,0.00010431805008700777
+nbr_ret_7_max,tetangga,Perubahan 7 hari tertinggi di 3 provinsi terdekat,0.00010105811102178877
+nbr_spike_share,tetangga,Porsi provinsi tetangga yang sedang lonjak,0.0
+nbr_rel_price,tetangga,Log harga relatif terhadap rata-rata tetangga,9.77981719565698e-05
+lead_ret_7_mean,pemimpin,Rata-rata perubahan 7 hari di provinsi pemimpin (jaringan Granger),0.0029574167199666705
+lead_ret_14_mean,pemimpin,Rata-rata perubahan 14 hari di provinsi pemimpin,0.0029574167199666705
+lead_spike_share,pemimpin,Porsi provinsi pemimpin yang sedang lonjak,0.0029574167199666705
+days_to_awal_ramadan,kalender,Hari menuju awal ramadan berikutnya (maks 120),0.0
+days_since_awal_ramadan,kalender,Hari sejak awal ramadan terakhir (maks 120),0.0
+days_to_idulfitri,kalender,Hari menuju idulfitri berikutnya (maks 120),0.0
+days_since_idulfitri,kalender,Hari sejak idulfitri terakhir (maks 120),0.0
+days_to_iduladha,kalender,Hari menuju iduladha berikutnya (maks 120),0.0
+days_since_iduladha,kalender,Hari sejak iduladha terakhir (maks 120),0.0
+days_to_natal,kalender,Hari menuju natal berikutnya (maks 120),0.0
+days_to_tahun_baru,kalender,Hari menuju tahun baru berikutnya (maks 120),0.0
+is_ramadan,kalender,1 jika bulan Ramadan,0.0
+is_nataru,kalender,1 jika 15 Des - 7 Jan,0.0
+doy_sin,kalender,Musiman tahunan (sin hari ke-n),0.0
+doy_cos,kalender,Musiman tahunan (cos hari ke-n),0.0
+dow,kalender,Hari dalam minggu (0=Senin),0.0
+rain_7_anom,cuaca,Anomali (z) curah hujan 7 hari — provinsi sendiri,0.0004518275544393524
+rain_7_anom_sentra,cuaca,Anomali (z) curah hujan 7 hari — rata-rata sentra produksi,0.0004518275544393524
+rain_30_anom,cuaca,Anomali (z) curah hujan 30 hari — provinsi sendiri,0.0004518275544393524
+rain_30_anom_sentra,cuaca,Anomali (z) curah hujan 30 hari — rata-rata sentra produksi,0.0004518275544393524
+rain_30_anom_lag30,cuaca,"Anomali (z) curah hujan 30 hari, digeser 30 hari — provinsi sendiri",0.0
+rain_30_anom_lag30_sentra,cuaca,"Anomali (z) curah hujan 30 hari, digeser 30 hari — rata-rata sentra produksi",0.0
+rain_30_anom_lag60,cuaca,"Anomali (z) curah hujan 30 hari, digeser 60 hari — provinsi sendiri",0.0
+rain_30_anom_lag60_sentra,cuaca,"Anomali (z) curah hujan 30 hari, digeser 60 hari — rata-rata sentra produksi",0.0
+rain_90_anom,cuaca,Anomali (z) curah hujan 90 hari — provinsi sendiri,0.0004518275544393524
+rain_90_anom_sentra,cuaca,Anomali (z) curah hujan 90 hari — rata-rata sentra produksi,0.0004518275544393524
+commodity_code,identitas,Kode varian komoditas (kategori LightGBM),0.0
+category_code,identitas,Kode kategori komoditas (kategori LightGBM),0.0
+province_code,identitas,Kode provinsi (kategori LightGBM),0.0

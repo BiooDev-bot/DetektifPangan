@@ -1,0 +1,32 @@
+id,name,cat_id,denomination,sort
+cat_1,Beras,,kg,1
+com_1,Beras Kualitas Bawah I,cat_1,kg,1
+cat_2,Daging Ayam,,kg,2
+com_2,Beras Kualitas Bawah II,cat_1,kg,2
+cat_3,Daging Sapi,,kg,3
+com_3,Beras Kualitas Medium I,cat_1,kg,3
+cat_4,Telur Ayam,,kg,4
+com_4,Beras Kualitas Medium II,cat_1,kg,4
+cat_5,Bawang Merah,,kg,5
+com_5,Beras Kualitas Super I,cat_1,kg,5
+cat_6,Bawang Putih,,kg,6
+com_6,Beras Kualitas Super II,cat_1,kg,6
+cat_7,Cabai Merah,,kg,7
+com_7,Daging Ayam Ras Segar,cat_2,kg,7
+cat_8,Cabai Rawit,,kg,8
+com_8,Daging Sapi Kualitas 1,cat_3,kg,8
+cat_9,Minyak Goreng,,kg,9
+com_9,Daging Sapi Kualitas 2,cat_3,kg,9
+cat_10,Gula Pasir,,kg,10
+com_10,Telur Ayam Ras Segar,cat_4,kg,10
+com_11,Bawang Merah Ukuran Sedang,cat_5,kg,11
+com_12,Bawang Putih Ukuran Sedang,cat_6,kg,12
+com_13,Cabai Merah Besar,cat_7,kg,13
+com_14,Cabai Merah Keriting,cat_7,kg,14
+com_15,Cabai Rawit Hijau,cat_8,kg,15
+com_16,Cabai Rawit Merah,cat_8,kg,16
+com_17,Minyak Goreng Curah,cat_9,kg,17
+com_18,Minyak Goreng Kemasan Bermerk 1,cat_9,kg,18
+com_19,Minyak Goreng Kemasan Bermerk 2,cat_9,kg,19
+com_20,Gula Pasir Kualitas Premium,cat_10,kg,20
+com_21,Gula Pasir Lokal,cat_10,kg,21

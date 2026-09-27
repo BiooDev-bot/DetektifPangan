@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RadarPangan — Peta Risiko Lonjakan Harga Pangan</title>
+  <meta name="description" content="Peringatan dini lonjakan harga pangan 14 hari ke depan untuk 34 provinsi, berbasis data PIHPS Bank Indonesia.">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js" charset="utf-8"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="2.2" opacity=".55"/><path d="M16 16 L27 9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg>
+      <div>
+        <h1>RadarPangan</h1>
+        <p class="sub">Peringatan dini lonjakan harga pangan &amp; peta rambatannya antarprovinsi</p>
+      </div>
+    </div>
+    <p class="asof" id="asof">Memuat data…</p>
+  </header>
+
+  <main>
+    <section class="controls card">
+      <label for="commodity">Komoditas</label>
+      <select id="commodity"></select>
+      <p class="hint" id="threshold-hint"></p>
+    </section>
+
+    <section class="summary" id="summary"></section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Peta risiko 14 hari ke depan</h2>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div id="map" class="map" role="img" aria-label="Peta risiko lonjakan per provinsi"></div>
+      <p class="hint">Ketuk provinsi untuk melihat detail &amp; alasan alarm.</p>
+    </section>
+
+    <section class="card" id="detail" hidden>
+      <div class="card-head">
+        <h2 id="detail-title">Detail provinsi</h2>
+        <span class="badge" id="detail-badge"></span>
+      </div>
+      <p class="big" id="detail-prob"></p>
+      <ul class="reasons" id="detail-reasons"></ul>
+      <div id="detail-chart" class="chart"></div>
+      <p class="hint" id="detail-leaders"></p>
+    </section>
+
+    <section class="card">
+      <h2>Provinsi dengan risiko tertinggi</h2>
+      <ol class="ranking" id="ranking"></ol>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Rambatan: provinsi mana yang biasanya naik duluan?</h2>
+      </div>
+      <div id="netmap" class="map small" role="img" aria-label="Peta rambatan harga antarprovinsi"></div>
+      <p class="hint" id="net-caption"></p>
+      <ol class="ranking compact" id="leaders"></ol>
+    </section>
+
+    <section class="card about">
+      <h2>Cara kerja</h2>
+      <ol class="steps">
+        <li><b>Data harian</b> harga 21 varian pangan di 34 provinsi dari PIHPS Bank Indonesia (pasar tradisional, pasar modern, pedagang besar, produsen) + curah hujan NASA POWER.</li>
+        <li><b>Fitur sinyal awal</b>: tren &amp; volatilitas harga, selisih harga produsen–konsumen, harga provinsi tetangga &amp; provinsi "pemimpin", kalender Ramadan–Idulfitri–Iduladha–Nataru, anomali hujan.</li>
+        <li><b>Model LightGBM</b> memprediksi peluang lonjakan dalam 14 hari; alasan setiap alarm dijelaskan dengan SHAP.</li>
+      </ol>
+      <div class="metrics" id="metrics"></div>
+      <p class="fine" id="sources"></p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Prototipe RadarPangan — USB 2026 Lomba Implementasi Data Mining. Bukan saran investasi/kebijakan resmi.</p>
+  </footer>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

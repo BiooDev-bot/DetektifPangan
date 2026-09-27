@@ -1,0 +1,7 @@
+kriteria,target,hasil,status
+"PR-AUC LightGBM ≥ 1,5× naive","≥ 1,5×",1.96×,✅ tercapai
+LightGBM > semua baseline (termasuk SARIMA di subset),ya,ya,✅ tercapai
+Deteksi kejadian,≥ 60%,85%,✅ tercapai
+Median lead time,≥ 7 hari,11 hari,✅ tercapai
+FAR & episode alarm palsu dilaporkan + dapat diatur,ya,FAR 55%; 1.30 episode palsu/seri/thn,✅ tercapai
+Validasi tanpa kebocoran,ya,walk-forward + purge 14 hr + uji leakage (NB04) lulus,✅ tercapai

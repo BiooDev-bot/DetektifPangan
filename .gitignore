@@ -1,0 +1,9 @@
+# data turunan (dibuat ulang oleh notebook / run_pipeline.py)
+data/interim/
+data/processed/
+site/
+# lingkungan & cache
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
