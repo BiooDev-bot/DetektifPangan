@@ -4,6 +4,7 @@
 
   const LEVELS = ["Rendah", "Waspada", "Tinggi", "Sedang lonjak"];
   const LEVEL_VAR = ["--low", "--watch", "--high", "--spike"];
+  const REFRESH_MS = 60 * 1000; // interval cek data baru, tanpa reload halaman
   const state = { meta: null, risk: [], geo: null, net: {}, history: {}, commodity: null, province: null };
   const $ = (id) => document.getElementById(id);
   const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
@@ -62,16 +63,25 @@
       return;
     }
     const m = state.meta;
-    $("asof").textContent = `Data s.d. ${fmtDate(m.asof)} · risiko ${fmtDate(m.window.start)} – ${fmtDate(m.window.end)}`;
+    showAsof();
     buildSelect();
     buildLegend();
     buildAbout();
     const params = new URLSearchParams(location.search);
     setCommodity(params.get("k") || m.default_commodity);
+    setInterval(checkUpdate, REFRESH_MS);
+    document.addEventListener("visibilitychange", checkUpdate);
+  }
+
+  function showAsof() {
+    const m = state.meta;
+    const t = new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+    $("asof").textContent = `Data s.d. ${fmtDate(m.asof)} · risiko ${fmtDate(m.window.start)} – ${fmtDate(m.window.end)} · dicek otomatis ${t}`;
   }
 
   function buildSelect() {
     const sel = $("commodity");
+    sel.innerHTML = "";
     const groups = {};
     state.meta.commodities.forEach((c) => { (groups[c.category] = groups[c.category] || []).push(c); });
     Object.keys(groups).forEach((cat) => {
@@ -84,7 +94,7 @@
       });
       sel.appendChild(og);
     });
-    sel.addEventListener("change", () => setCommodity(sel.value));
+    sel.onchange = () => setCommodity(sel.value);
   }
 
   function buildLegend() {
@@ -104,7 +114,7 @@
   }
 
   // ---------------------------------------------------------------- commodity
-  function setCommodity(cid) {
+  function setCommodity(cid, keepProvince) {
     const exists = state.meta.commodities.some((c) => c.id === cid);
     state.commodity = exists ? cid : state.meta.default_commodity;
     $("commodity").value = state.commodity;
@@ -118,7 +128,8 @@
     renderNetwork();
     $("detail").hidden = true;
     const top = rows.slice().sort((a, b) => b.prob - a.prob)[0];
-    if (top) showDetail(top.p, false);
+    const pick = (keepProvince && rows.find((r) => r.p === state.province)) || top;
+    if (pick) showDetail(pick.p, false);
   }
 
   function renderSummary(rows) {
@@ -251,6 +262,30 @@
     Plotly.react("netmap", traces, baseLayout(), plotCfg);
     $("net-caption").textContent = `Garis = kenaikan harga di satu provinsi secara statistik mendahului provinsi lain (uji Granger, dikontrol tren nasional). Titik besar = provinsi "pemimpin"; lingkaran kecil = provinsi yang mengikuti.`;
     $("leaders").innerHTML = lead.slice(0, 5).map((l) => `<li><div class="row"><span class="name">${provName(l[0])}</span><span class="p">memimpin ${l[2]} · mengikuti ${l[3]}</span></div></li>`).join("");
+  }
+
+  // ---------------------------------------------------------------- pembaruan otomatis
+  // meta.json dicek berkala (dan saat tab kembali dibuka); jika pipeline menerbitkan data baru
+  // (generated_at berubah), data dimuat ulang & tampilan dirender ulang tanpa reload halaman.
+  let checking = false;
+  async function checkUpdate() {
+    if (document.hidden || checking) return;
+    checking = true;
+    try {
+      const meta = await getJSON("data/meta.json");
+      if (meta.generated_at !== state.meta.generated_at) {
+        const [risk, net] = await Promise.all([getJSON("data/risk_latest.json"), getJSON("data/network.json")]);
+        Object.assign(state, { meta, risk, net, history: {} });
+        buildSelect();
+        buildAbout();
+        setCommodity(state.commodity, true);
+      }
+      showAsof();
+    } catch (e) {
+      // gagal sementara (offline / data sedang ditulis ulang pipeline): coba lagi di siklus berikutnya
+    } finally {
+      checking = false;
+    }
   }
 
   document.addEventListener("DOMContentLoaded", init);
