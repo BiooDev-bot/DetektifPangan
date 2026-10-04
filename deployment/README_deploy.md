@@ -23,16 +23,29 @@ Tambahkan `?k=com_14` di URL untuk langsung membuka komoditas tertentu, mis. `ht
 
 ## 2. Hosting (pilih salah satu)
 
-### Opsi A — GitHub Pages + update otomatis (direkomendasikan)
-1. Buat repo GitHub baru (mis. `radarpangan`), lalu push **isi folder `MiningProcess`** sebagai root repo.
+### Opsi A — GitHub Actions → Vercel + update otomatis (direkomendasikan)
+Dashboard production: **<https://radarpangan.vercel.app>** (project Vercel `radarpangan`, scope `bioodev-bots-projects`).
+Workflow membangun `site/` di runner GitHub lalu men-deploy-nya lewat Vercel CLI. Project Vercel **sengaja tidak
+disambungkan ke GitHub** (Git integration): kalau disambungkan, setiap push dibangun dari root repo yang tidak berisi
+`site/` (folder itu ada di `.gitignore`) sehingga link production bisa rusak.
+
+1. Repo GitHub `BiooDev-bot/DetektifPangan` berisi folder proyek ini sebagai root repo.
    `data/raw` (cache ±35 MB) ikut di-push supaya update harian tidak perlu scraping ulang dari 2018.
-2. Repo → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. Tab **Actions → "Update dashboard RadarPangan" → Run workflow** (jalankan pertama kali secara manual).
-4. Setelah selesai, URL dashboard: `https://<username>.github.io/radarpangan/`.
+2. Buat token: <https://vercel.com/account/tokens> → **Create Token** → Scope: `bioodev-bots-projects` →
+   Expiration minimal sampai akhir November 2026 (final USB 19 Nov 2026).
+3. Simpan sebagai secret GitHub `VERCEL_TOKEN`: repo → **Settings → Secrets and variables → Actions → New repository secret**
+   (atau di terminal: `gh secret set VERCEL_TOKEN --repo BiooDev-bot/DetektifPangan`). Jangan tempel token di file, commit, atau chat.
+4. Tab **Actions → "Update dashboard RadarPangan" → Run workflow** (jalankan pertama kali secara manual).
+   Urutan step: update data → simpan cache (commit) → deploy Vercel → verifikasi `generated_at` dashboard live.
 5. Workflow `.github/workflows/update-dashboard.yml` berjalan otomatis **setiap hari kerja pukul 17.00 WIB**.
    Centang `retrain` saat menjalankan manual untuk melatih ulang model (disarankan sebulan sekali).
 
-> Jika server GitHub (luar negeri) diblokir/timeout oleh `bi.go.id`, pakai Opsi C (update dari laptop) lalu push folder `site/`.
+> `VERCEL_ORG_ID` & `VERCEL_PROJECT_ID` sudah ada di `env` workflow, jadi tidak perlu `vercel link` (`site/` dibuat ulang
+> dari nol setiap update, sehingga folder `.vercel` di dalamnya selalu hilang). Deploy gagal 401/403 → token salah scope
+> atau kedaluwarsa: buat token baru lalu perbarui secret `VERCEL_TOKEN`.
+>
+> Jika server GitHub (luar negeri) diblokir/timeout oleh `bi.go.id`, pakai Opsi C (update dari laptop) lalu deploy
+> `site/` dengan `npx vercel deploy site --prod --yes --project radarpangan`.
 
 ### Opsi B — Vercel (drag & drop / CLI)
 - Dashboard Vercel → **Add New → Project → Deploy from folder**: pilih folder `site/` (Framework: *Other*, tanpa build command).

@@ -124,4 +124,4 @@ deployment:
     waspada: 0.5                     # dikalikan ambang alarm terpilih (lihat 07_deployment)
     tinggi: 1.0
   history_days: 180
-  dashboard_url: "https://GANTI-DENGAN-URL-DASHBOARD-KALIAN"
+  dashboard_url: "https://radarpangan.vercel.app"
